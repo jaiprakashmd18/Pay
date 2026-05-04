@@ -4,33 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZDC Global Payment Portal</title>
+    <!-- Core Scripts -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #0a0b0d; --card: #161b22; --accent: #3395ff; --border: #30363d;
             --text: #ffffff; --sec: #8b949e;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        * { 
+            box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; 
+            user-select: none; /* Prevents text selection for extra security */
+        }
         
         body { 
-            background: var(--bg); 
-            color: var(--text); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            padding: 10px; 
+            background: var(--bg); color: var(--text); 
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; padding: 10px; 
         }
         
         .card { 
-            background: var(--card); 
-            width: 100%; 
-            max-width: 480px; 
-            border-radius: 20px; 
-            border: 1px solid var(--border); 
-            padding: 25px; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+            background: var(--card); width: 100%; max-width: 480px; 
+            border-radius: 20px; border: 1px solid var(--border); 
+            padding: 25px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
         }
 
         @media (min-width: 480px) { .card { padding: 35px; } }
@@ -41,16 +38,11 @@
         label { display: block; font-size: 0.65rem; text-transform: uppercase; color: var(--sec); margin-bottom: 8px; font-weight: 700; letter-spacing: 1px; }
         
         .input-box { 
-            width: 100%; 
-            padding: 14px; 
-            background: #0d1117; 
-            border: 1px solid var(--border); 
-            color: white; 
-            border-radius: 12px; 
-            outline: none; 
-            font-size: 1rem; 
-            margin-bottom: 15px; 
-            appearance: none;
+            width: 100%; padding: 14px; background: #0d1117; 
+            border: 1px solid var(--border); color: white; 
+            border-radius: 12px; outline: none; font-size: 1rem; 
+            margin-bottom: 15px; appearance: none;
+            user-select: text; /* Re-enable selection for inputs so users can type */
         }
         .input-box:focus { border-color: var(--accent); }
         
@@ -60,57 +52,49 @@
         .live-math { 
             background: rgba(51, 149, 255, 0.04); 
             border: 1px solid rgba(51, 149, 255, 0.2); 
-            border-radius: 12px; 
-            padding: 15px; 
-            margin-bottom: 20px; 
+            border-radius: 12px; padding: 20px; 
+            margin-bottom: 20px; text-align: center;
         }
         
-        .formula { font-family: 'Courier New', monospace; font-size: 0.75rem; color: var(--accent); display: block; margin-bottom: 12px; border-bottom: 1px solid rgba(51, 149, 255, 0.1); padding-bottom: 8px; overflow-x: auto; }
-        .line { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; }
-        .total-line { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+        .total-label { font-size: 0.7rem; text-transform: uppercase; color: var(--sec); font-weight: 700; letter-spacing: 1px; margin-bottom: 5px; display: block; }
+        .total-line { font-size: 2rem; font-weight: 700; color: var(--accent); }
         
         .btn { 
-            width: 100%; 
-            padding: 16px; 
-            background: var(--accent); 
-            color: white; 
-            border: none; 
-            border-radius: 12px; 
-            font-weight: 700; 
-            font-size: 1rem; 
-            cursor: pointer; 
+            width: 100%; padding: 16px; background: var(--accent); 
+            color: white; border: none; border-radius: 12px; 
+            font-weight: 700; font-size: 1rem; cursor: pointer; 
             transition: transform 0.2s;
         }
         .btn:active { transform: scale(0.97); }
         .badge { display: inline-block; padding: 4px 8px; background: rgba(35, 134, 54, 0.15); color: #3fb950; border-radius: 4px; font-size: 0.6rem; font-weight: 700; margin-bottom: 8px; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;"> <!-- Disables Right Click[cite: 1] -->
 
 <div class="card">
     <div class="header">
-        <span class="badge">SECURE GATEWAY</span>
+        <span class="badge">SECURE TEST PORTAL</span>
         <h2>ZDC Global Checkout</h2>
     </div>
 
     <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" id="client-name" class="input-box" placeholder="Enter your name" required>
+        <label>Client Name</label>
+        <input type="text" id="client-name" class="input-box" placeholder="Full Name">
     </div>
 
     <div class="form-group">
         <label>Phone Number</label>
-        <input type="tel" id="client-phone" class="input-box" placeholder="+995 ..." required>
+        <input type="tel" id="client-phone" class="input-box" placeholder="+91 ...">
     </div>
 
     <div class="form-group">
-        <label>Amount (Requested)</label>
+        <label>Amount to Receive</label>
         <input type="number" id="amt" class="input-box" value="100" min="0">
     </div>
 
     <div class="row">
         <div class="form-group">
-            <label>Currency to Get</label>
+            <label>Target Currency</label>
             <select id="target-cur" class="input-box">
                 <option value="USD">USD ($)</option>
                 <option value="GEL">GEL (₾)</option>
@@ -119,7 +103,7 @@
             </select>
         </div>
         <div class="form-group">
-            <label>Pay Using</label>
+            <label>Payment Currency</label>
             <select id="pay-cur" class="input-box">
                 <option value="INR" selected>INR (₹)</option>
                 <option value="USD">USD ($)</option>
@@ -133,17 +117,24 @@
     </div>
 
     <div class="live-math">
-        <span class="formula" id="formula-text">Syncing rates...</span>
-        <div class="line"><span>Conversion:</span> <span id="out-base">--</span></div>
-        <div class="line"><span>Service Fee:</span> <span id="out-fee">--</span></div>
-        <div class="line total-line"><span>Total Due:</span> <span id="out-total">--</span></div>
+        <span class="total-label">Total Amount Due</span>
+        <div class="total-line" id="out-total">--</div>
     </div>
 
-    <button class="btn" id="pay-btn">Initialize Payment</button>
+    <button class="btn" id="pay-btn">Pay Now</button>
 </div>
 
 <script>
-    const RZP_KEY = 'rzp_test_SlAhlNeWJ4YdsA'; 
+    // SECURITY: Disable F12, Ctrl+Shift+I, Ctrl+U[cite: 1]
+    document.onkeydown = function(e) {
+        if(event.keyCode == 123) return false;
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+        if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+    }
+
+    const RZP_KEY = 'rzp_test_SlAhlNeWJ4YdsA'; // Test Key[cite: 1]
     const SYSTEM_FEE_USD = 14; 
     const sym = { USD: '$', INR: '₹', EUR: '€', GEL: '₾', GBP: '£', AED: 'د.إ', CAD: '$' };
     let liveRates = {};
@@ -180,39 +171,62 @@
         const roundedFee = applyRounding(feeInPayCur, payCur);
         const total = finalBase + roundedFee;
 
-        document.getElementById('formula-text').innerText = `Rate: 1 ${targetCur} = ${crossRate.toFixed(4)} ${payCur}`;
-        document.getElementById('out-base').innerText = `${sym[payCur] || payCur} ${finalBase.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-        document.getElementById('out-fee').innerText = `${sym[payCur] || payCur} ${roundedFee.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
         document.getElementById('out-total').innerText = `${sym[payCur] || payCur} ${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
 
         finalSelection = { 
             amt: Math.round(Number(total.toFixed(2)) * 100), 
             cur: payCur,
-            desc: `ZDC Exchange: ${amountWanted} ${targetCur}`
+            totalVal: total.toFixed(2),
+            desc: `ZDC Global Exchange: ${amountWanted} ${targetCur}`
         };
     }
 
-    function downloadReceipt(res, selection, name, phone) {
-        const content = `-------------------------------------\nZDC GLOBAL PAYMENT RECEIPT\n-------------------------------------\nClient: ${name}\nPhone: ${phone}\nDate: ${new Date().toLocaleString()}\nPayment ID: ${res.razorpay_payment_id}\nDesc: ${selection.desc}\nAmount: ${sym[selection.cur]} ${(selection.amt / 100).toFixed(2)}\nStatus: SUCCESSFUL\n-------------------------------------`;
-        const blob = new Blob([content], { type: 'text/plain' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `ZDC_Receipt_${res.razorpay_payment_id}.txt`;
-        a.click();
+    function generatePDFReceipt(res, selection, name, phone) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const timestamp = new Date().toLocaleString();
+
+        doc.setFillColor(51, 149, 255);
+        doc.rect(0, 0, 210, 40, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(22);
+        doc.text("ZDC GLOBAL PAYMENT SLIP", 20, 25);
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text("CLIENT DETAILS", 20, 55);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Name: ${name}`, 20, 65);
+        doc.text(`Phone: ${phone}`, 20, 72);
+        doc.text(`Date: ${timestamp}`, 20, 79);
+
+        doc.setFont("helvetica", "bold");
+        doc.text("TRANSACTION SUMMARY", 20, 95);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Payment ID: ${res.razorpay_payment_id}`, 20, 105);
+        doc.text(`Description: ${selection.desc}`, 20, 112);
+        doc.text(`Currency: ${selection.cur}`, 20, 119);
+        
+        doc.setDrawColor(200, 200, 200);
+        doc.line(20, 130, 190, 130);
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text(`Total Paid: ${sym[selection.cur]} ${selection.totalVal}`, 20, 145);
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text("Status: SUCCESSFUL (Instant Capture)", 20, 155);
+
+        doc.line(20, 270, 190, 270);
+        doc.text("Thank you for choosing ZDC Infrastructure.", 105, 280, null, null, "center");
+
+        doc.save(`ZDC_Receipt_${res.razorpay_payment_id}.pdf`);
     }
 
     function processPayment() {
         const name = document.getElementById('client-name').value;
         const phone = document.getElementById('client-phone').value;
-
-        if (!name || !phone) {
-            alert("Please provide your Name and Phone Number.");
-            return;
-        }
-        if (finalSelection.amt <= 0) {
-            alert("Enter a valid amount.");
-            return;
-        }
+        if (!name || !phone) { alert("Please provide Name and Phone."); return; }
 
         const options = {
             key: RZP_KEY,
@@ -220,16 +234,13 @@
             currency: finalSelection.cur,
             name: "ZDC Global",
             description: finalSelection.desc,
+            payment_capture: 1, // Instant Capture[cite: 1]
             handler: function(response) {
-                downloadReceipt(response, finalSelection, name, phone);
-                alert("Payment Successful! Receipt downloaded.");
+                generatePDFReceipt(response, finalSelection, name, phone);[cite: 1]
+                alert("Success! PDF Receipt generated.");
                 location.reload();
             },
-            prefill: { 
-                name: name, 
-                contact: phone,
-                email: "support@zdc.com" 
-            },
+            prefill: { name: name, contact: phone },
             theme: { color: "#3395ff" }
         };
         const rzp = new Razorpay(options);
