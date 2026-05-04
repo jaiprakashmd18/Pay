@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZDC Global Payment Portal</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0b0d; --card: #161b22; --accent: #3395ff; --border: #30363d;
+            --text: #ffffff; --sec: #8b949e;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        
+        .card { background: var(--card); width: 100%; max-width: 480px; border-radius: 20px; border: 1px solid var(--border); padding: 35px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; }
+        
+        label { display: block; font-size: 0.7rem; text-transform: uppercase; color: var(--sec); margin-bottom: 8px; font-weight: 700; letter-spacing: 1px; }
+        .input-box { width: 100%; padding: 14px; background: #0d1117; border: 1px solid var(--border); color: white; border-radius: 10px; outline: none; font-size: 1rem; margin-bottom: 20px; transition: border-color 0.2s; }
+        .input-box:focus { border-color: var(--accent); }
+        
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .live-math { background: rgba(51, 149, 255, 0.04); border: 1px solid rgba(51, 149, 255, 0.2); border-radius: 12px; padding: 20px; margin-bottom: 25px; }
+        .formula { font-family: 'Courier New', monospace; font-size: 0.8rem; color: var(--accent); display: block; margin-bottom: 12px; border-bottom: 1px solid rgba(51, 149, 255, 0.1); padding-bottom: 8px; }
+        .line { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; }
+        .total-line { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+        
+        .btn { width: 100%; padding: 18px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: transform 0.2s, background 0.2s; }
+        .btn:hover { background: #2b7ed9; }
+        .btn:active { transform: scale(0.98); }
+        .btn:disabled { opacity: 0.4; filter: grayscale(1); }
+
+        .badge { display: inline-block; padding: 4px 8px; background: rgba(35, 134, 54, 0.15); color: #3fb950; border-radius: 4px; font-size: 0.65rem; font-weight: 700; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <span class="badge">LIVE SECURE MODE</span>
+        <h2>Global Checkout</h2>
+    </div>
+
+    <div class="form-group">
+        <label>Amount You Want to Get</label>
+        <input type="number" id="amt" class="input-box" value="100" min="1">
+    </div>
+
+    <div class="row">
+        <div class="form-group">
+            <label>In Which Currency?</label>
+            <select id="target-cur" class="input-box">
+                <option value="USD">USD ($)</option>
+                <option value="GEL">GEL (₾)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Customer Pays In</label>
+            <select id="pay-cur" class="input-box">
+                <option value="INR" selected>INR (₹)</option>
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GEL">GEL (₾)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="AED">AED (د.إ)</option>
+                <option value="CAD">CAD ($)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="live-math">
+        <span class="formula" id="formula-text">Connecting to global rates...</span>
+        <div class="line"><span>Base Value:</span> <span id="out-base">--</span></div>
+        <div class="line"><span>Processing Fee:</span> <span id="out-fee">--</span></div>
+        <div class="line total-line"><span>Total Due:</span> <span id="out-total">--</span></div>
+    </div>
+
+    <button class="btn" id="pay-btn">Pay Now</button>
+</div>
+
+<script>
+    // Verified Credentials from rzp-key.csv
+    const RZP_KEY = 'rzp_live_S2txcF6a0q5CDJ'; 
+    const SYSTEM_FEE_USD = 14; 
+
+    const sym = { USD: '$', INR: '₹', EUR: '€', GEL: '₾', GBP: '£', AED: 'د.إ', CAD: '$' };
+    let liveRates = {};
+    let finalSelection = {};
+
+    async function syncRates() {
+        try {
+            // Fetching real-time global data
+            const res = await fetch('https://open.er-api.com/v6/latest/USD');
+            const data = await res.json();
+            liveRates = data.rates;
+            calculate();
+        } catch (e) {
+            console.error("Sync failed. Using safety buffer.");
+            liveRates = { USD: 1, INR: 83.5, EUR: 0.93, GEL: 2.7, GBP: 0.79 };
+            calculate();
+        }
+    }
+
+    function applyRounding(val, curr) {
+        if (curr === 'INR') return Math.ceil(val / 10) * 10;
+        if (['USD', 'EUR', 'GBP'].includes(curr)) return Math.floor(val) + 0.90;
+        if (curr === 'GEL') return Math.round(val * 2) / 2;
+        return Math.ceil(val); // Default for other currencies
+    }
+
+    function calculate() {
+        if (!liveRates.USD) return;
+
+        const amountWanted = parseFloat(document.getElementById('amt').value) || 0;
+        const targetCur = document.getElementById('target-cur').value;
+        const payCur = document.getElementById('pay-cur').value;
+
+        // 1. Calculate the Live Cross-Rate
+        // How much of the 'payCur' is 1 unit of 'targetCur'?
+        const crossRate = liveRates[payCur] / liveRates[targetCur];
+        
+        // 2. Base Conversion
+        const finalBase = amountWanted * crossRate;
+
+        // 3. Convert $14 USD Fee to Payment Currency + 5% Buffer
+        const feeInPayCur = (SYSTEM_FEE_USD * liveRates[payCur]) * 1.05;
+        const roundedFee = applyRounding(feeInPayCur, payCur);
+
+        const total = finalBase + roundedFee;
+
+        // UI Updates
+        document.getElementById('formula-text').innerText = 
+            `Rate: 1 ${targetCur} = ${crossRate.toFixed(4)} ${payCur}`;
+        
+        document.getElementById('out-base').innerText = `${sym[payCur] || payCur} ${finalBase.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        document.getElementById('out-fee').innerText = `${sym[payCur] || payCur} ${roundedFee.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        document.getElementById('out-total').innerText = `${sym[payCur] || payCur} ${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+
+        finalSelection = { 
+            amt: Math.round(total * 100), 
+            cur: payCur,
+            desc: `Exchange ${amountWanted} ${targetCur} via ZDC`
+        };
+    }
+
+    function processPayment() {
+        if (!finalSelection.amt) return;
+
+        const options = {
+            key: RZP_KEY,
+            amount: finalSelection.amt,
+            currency: finalSelection.cur,
+            name: "ZDC Global",
+            description: finalSelection.desc,
+            image: "https://cdn-icons-png.flaticon.com/512/625/625599.png", 
+            handler: function(response) {
+                alert("Payment Successful! Ref: " + response.razorpay_payment_id);
+                location.reload();
+            },
+            prefill: { name: "Client", email: "support@zdc.com" },
+            theme: { color: "#3395ff" }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.on('payment.failed', (resp) => alert("Failed: " + resp.error.description));
+        rzp.open();
+    }
+
+    // Bind Events
+    document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', calculate));
+    document.getElementById('pay-btn').onclick = processPayment;
+
+    // Start App
+    syncRates();
+    setInterval(syncRates, 600000); // Sync rates every 10 mins
+</script>
+
+</body>
+</html>
