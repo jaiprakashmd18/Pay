@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZDC Global Payment Portal</title>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,28 +12,77 @@
             --text: #ffffff; --sec: #8b949e;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         
-        .card { background: var(--card); width: 100%; max-width: 480px; border-radius: 20px; border: 1px solid var(--border); padding: 35px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; }
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 10px; 
+        }
         
-        label { display: block; font-size: 0.7rem; text-transform: uppercase; color: var(--sec); margin-bottom: 8px; font-weight: 700; letter-spacing: 1px; }
-        .input-box { width: 100%; padding: 14px; background: #0d1117; border: 1px solid var(--border); color: white; border-radius: 10px; outline: none; font-size: 1rem; margin-bottom: 20px; transition: border-color 0.2s; }
+        .card { 
+            background: var(--card); 
+            width: 100%; 
+            max-width: 480px; 
+            border-radius: 20px; 
+            border: 1px solid var(--border); 
+            padding: 25px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+        }
+
+        @media (min-width: 480px) { .card { padding: 35px; } }
+
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h2 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
+        
+        label { display: block; font-size: 0.65rem; text-transform: uppercase; color: var(--sec); margin-bottom: 8px; font-weight: 700; letter-spacing: 1px; }
+        
+        .input-box { 
+            width: 100%; 
+            padding: 14px; 
+            background: #0d1117; 
+            border: 1px solid var(--border); 
+            color: white; 
+            border-radius: 12px; 
+            outline: none; 
+            font-size: 1rem; 
+            margin-bottom: 15px; 
+            appearance: none;
+        }
         .input-box:focus { border-color: var(--accent); }
         
-        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        @media (max-width: 380px) { .row { grid-template-columns: 1fr; } }
         
-        .live-math { background: rgba(51, 149, 255, 0.04); border: 1px solid rgba(51, 149, 255, 0.2); border-radius: 12px; padding: 20px; margin-bottom: 25px; }
-        .formula { font-family: 'Courier New', monospace; font-size: 0.8rem; color: var(--accent); display: block; margin-bottom: 12px; border-bottom: 1px solid rgba(51, 149, 255, 0.1); padding-bottom: 8px; }
-        .line { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; }
-        .total-line { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+        .live-math { 
+            background: rgba(51, 149, 255, 0.04); 
+            border: 1px solid rgba(51, 149, 255, 0.2); 
+            border-radius: 12px; 
+            padding: 15px; 
+            margin-bottom: 20px; 
+        }
         
-        .btn { width: 100%; padding: 18px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: transform 0.2s, background 0.2s; }
-        .btn:hover { background: #2b7ed9; }
-        .btn:active { transform: scale(0.98); }
-
-        .badge { display: inline-block; padding: 4px 8px; background: rgba(35, 134, 54, 0.15); color: #3fb950; border-radius: 4px; font-size: 0.65rem; font-weight: 700; margin-bottom: 10px; }
+        .formula { font-family: 'Courier New', monospace; font-size: 0.75rem; color: var(--accent); display: block; margin-bottom: 12px; border-bottom: 1px solid rgba(51, 149, 255, 0.1); padding-bottom: 8px; overflow-x: auto; }
+        .line { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; }
+        .total-line { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+        
+        .btn { 
+            width: 100%; 
+            padding: 16px; 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-weight: 700; 
+            font-size: 1rem; 
+            cursor: pointer; 
+            transition: transform 0.2s;
+        }
+        .btn:active { transform: scale(0.97); }
+        .badge { display: inline-block; padding: 4px 8px; background: rgba(35, 134, 54, 0.15); color: #3fb950; border-radius: 4px; font-size: 0.6rem; font-weight: 700; margin-bottom: 8px; }
     </style>
 </head>
 <body>
@@ -45,8 +94,18 @@
     </div>
 
     <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="client-name" class="input-box" placeholder="Enter your name" required>
+    </div>
+
+    <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="client-phone" class="input-box" placeholder="+995 ..." required>
+    </div>
+
+    <div class="form-group">
         <label>Amount (Requested)</label>
-        <input type="number" id="amt" class="input-box" value="100" min="1">
+        <input type="number" id="amt" class="input-box" value="100" min="0">
     </div>
 
     <div class="row">
@@ -74,9 +133,9 @@
     </div>
 
     <div class="live-math">
-        <span class="formula" id="formula-text">Fetching global rates...</span>
+        <span class="formula" id="formula-text">Syncing rates...</span>
         <div class="line"><span>Conversion:</span> <span id="out-base">--</span></div>
-        <div class="line"><span>ZDC Service Fee:</span> <span id="out-fee">--</span></div>
+        <div class="line"><span>Service Fee:</span> <span id="out-fee">--</span></div>
         <div class="line total-line"><span>Total Due:</span> <span id="out-total">--</span></div>
     </div>
 
@@ -84,9 +143,8 @@
 </div>
 
 <script>
-    const RZP_KEY = 'rzp_test_SlAhlNeWJ4YdsA'; 
+    const RZP_KEY = 'rzp_live_S2txcF6a0q5CDJ'; 
     const SYSTEM_FEE_USD = 14; 
-
     const sym = { USD: '$', INR: '₹', EUR: '€', GEL: '₾', GBP: '£', AED: 'د.إ', CAD: '$' };
     let liveRates = {};
     let finalSelection = {};
@@ -98,7 +156,6 @@
             liveRates = data.rates;
             calculate();
         } catch (e) {
-            console.warn("Using offline buffer for rates.");
             liveRates = { USD: 1, INR: 83.5, EUR: 0.93, GEL: 2.7, GBP: 0.79, AED: 3.67, CAD: 1.37 };
             calculate();
         }
@@ -113,7 +170,6 @@
 
     function calculate() {
         if (!liveRates.USD) return;
-
         const amountWanted = parseFloat(document.getElementById('amt').value) || 0;
         const targetCur = document.getElementById('target-cur').value;
         const payCur = document.getElementById('pay-cur').value;
@@ -124,26 +180,37 @@
         const roundedFee = applyRounding(feeInPayCur, payCur);
         const total = finalBase + roundedFee;
 
-        document.getElementById('formula-text').innerText = 
-            `Rate: 1 ${targetCur} = ${crossRate.toFixed(4)} ${payCur}`;
-        
+        document.getElementById('formula-text').innerText = `Rate: 1 ${targetCur} = ${crossRate.toFixed(4)} ${payCur}`;
         document.getElementById('out-base').innerText = `${sym[payCur] || payCur} ${finalBase.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
         document.getElementById('out-fee').innerText = `${sym[payCur] || payCur} ${roundedFee.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
         document.getElementById('out-total').innerText = `${sym[payCur] || payCur} ${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
 
-        // Ensure amount is integer in smallest unit (paise/cents)[cite: 1]
-        const totalInSubunits = Math.round(Number(total.toFixed(2)) * 100);
-
         finalSelection = { 
-            amt: totalInSubunits, 
+            amt: Math.round(Number(total.toFixed(2)) * 100), 
             cur: payCur,
             desc: `ZDC Exchange: ${amountWanted} ${targetCur}`
         };
     }
 
+    function downloadReceipt(res, selection, name, phone) {
+        const content = `-------------------------------------\nZDC GLOBAL PAYMENT RECEIPT\n-------------------------------------\nClient: ${name}\nPhone: ${phone}\nDate: ${new Date().toLocaleString()}\nPayment ID: ${res.razorpay_payment_id}\nDesc: ${selection.desc}\nAmount: ${sym[selection.cur]} ${(selection.amt / 100).toFixed(2)}\nStatus: SUCCESSFUL\n-------------------------------------`;
+        const blob = new Blob([content], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `ZDC_Receipt_${res.razorpay_payment_id}.txt`;
+        a.click();
+    }
+
     function processPayment() {
-        if (!finalSelection.amt || finalSelection.amt < 100) {
-            alert("Minimum transaction amount not met.");
+        const name = document.getElementById('client-name').value;
+        const phone = document.getElementById('client-phone').value;
+
+        if (!name || !phone) {
+            alert("Please provide your Name and Phone Number.");
+            return;
+        }
+        if (finalSelection.amt <= 0) {
+            alert("Enter a valid amount.");
             return;
         }
 
@@ -153,37 +220,26 @@
             currency: finalSelection.cur,
             name: "ZDC Global",
             description: finalSelection.desc,
-            image: "https://cdn-icons-png.flaticon.com/512/625/625599.png", 
             handler: function(response) {
-                alert("Payment Successful! ID: " + response.razorpay_payment_id);
+                downloadReceipt(response, finalSelection, name, phone);
+                alert("Payment Successful! Receipt downloaded.");
                 location.reload();
             },
             prefill: { 
-                name: "ZDC User", 
+                name: name, 
+                contact: phone,
                 email: "support@zdc.com" 
             },
-            theme: { color: "#3395ff" },
-            modal: {
-                ondismiss: function() { console.log("Checkout closed."); }
-            }
+            theme: { color: "#3395ff" }
         };
-
         const rzp = new Razorpay(options);
-        
-        // Critical for international troubleshooting[cite: 1]
-        rzp.on('payment.failed', function (resp) {
-            console.error("Payment failed:", resp.error);
-            alert("Error: " + resp.error.description + "\nReason: " + resp.error.reason);
-        });
-
+        rzp.on('payment.failed', (resp) => alert("Error: " + resp.error.description));
         rzp.open();
     }
 
     document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', calculate));
     document.getElementById('pay-btn').onclick = processPayment;
-
     syncRates();
-    setInterval(syncRates, 600000); 
 </script>
 
 </body>
