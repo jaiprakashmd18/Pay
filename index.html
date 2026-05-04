@@ -32,7 +32,7 @@
         .btn { width: 100%; padding: 18px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: transform 0.2s, background 0.2s; }
         .btn:hover { background: #2b7ed9; }
         .btn:active { transform: scale(0.98); }
-        .btn:disabled { opacity: 0.4; filter: grayscale(1); }
+        .btn:disabled { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
 
         .badge { display: inline-block; padding: 4px 8px; background: rgba(35, 134, 54, 0.15); color: #3fb950; border-radius: 4px; font-size: 0.65rem; font-weight: 700; margin-bottom: 10px; }
     </style>
@@ -85,7 +85,6 @@
 </div>
 
 <script>
-    // Verified Credentials from rzp-key.csv
     const RZP_KEY = 'rzp_live_S2txcF6a0q5CDJ'; 
     const SYSTEM_FEE_USD = 14; 
 
@@ -95,14 +94,13 @@
 
     async function syncRates() {
         try {
-            // Fetching real-time global data
             const res = await fetch('https://open.er-api.com/v6/latest/USD');
             const data = await res.json();
             liveRates = data.rates;
             calculate();
         } catch (e) {
             console.error("Sync failed. Using safety buffer.");
-            liveRates = { USD: 1, INR: 83.5, EUR: 0.93, GEL: 2.7, GBP: 0.79 };
+            liveRates = { USD: 1, INR: 83.5, EUR: 0.93, GEL: 2.7, GBP: 0.79, AED: 3.67, CAD: 1.37 };
             calculate();
         }
     }
@@ -111,7 +109,7 @@
         if (curr === 'INR') return Math.ceil(val / 10) * 10;
         if (['USD', 'EUR', 'GBP'].includes(curr)) return Math.floor(val) + 0.90;
         if (curr === 'GEL') return Math.round(val * 2) / 2;
-        return Math.ceil(val); // Default for other currencies
+        return Math.ceil(val); 
     }
 
     function calculate() {
@@ -121,20 +119,12 @@
         const targetCur = document.getElementById('target-cur').value;
         const payCur = document.getElementById('pay-cur').value;
 
-        // 1. Calculate the Live Cross-Rate
-        // How much of the 'payCur' is 1 unit of 'targetCur'?
         const crossRate = liveRates[payCur] / liveRates[targetCur];
-        
-        // 2. Base Conversion
         const finalBase = amountWanted * crossRate;
-
-        // 3. Convert $14 USD Fee to Payment Currency + 5% Buffer
         const feeInPayCur = (SYSTEM_FEE_USD * liveRates[payCur]) * 1.05;
         const roundedFee = applyRounding(feeInPayCur, payCur);
-
         const total = finalBase + roundedFee;
 
-        // UI Updates
         document.getElementById('formula-text').innerText = 
             `Rate: 1 ${targetCur} = ${crossRate.toFixed(4)} ${payCur}`;
         
@@ -142,15 +132,19 @@
         document.getElementById('out-fee').innerText = `${sym[payCur] || payCur} ${roundedFee.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
         document.getElementById('out-total').innerText = `${sym[payCur] || payCur} ${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
 
+        // Ensure amount is in smallest currency unit (paise/cents)
         finalSelection = { 
-            amt: Math.round(total * 100), 
+            amt: Math.round(total.toFixed(2) * 100), 
             cur: payCur,
             desc: `Exchange ${amountWanted} ${targetCur} via ZDC`
         };
     }
 
     function processPayment() {
-        if (!finalSelection.amt) return;
+        if (!finalSelection.amt || finalSelection.amt <= 0) {
+            alert("Invalid amount.");
+            return;
+        }
 
         const options = {
             key: RZP_KEY,
@@ -163,22 +157,34 @@
                 alert("Payment Successful! Ref: " + response.razorpay_payment_id);
                 location.reload();
             },
-            prefill: { name: "Client", email: "support@zdc.com" },
-            theme: { color: "#3395ff" }
+            prefill: { 
+                name: "ZDC Client", 
+                email: "support@zdc.com" 
+            },
+            theme: { color: "#3395ff" },
+            modal: {
+                ondismiss: function() {
+                    console.log("Checkout closed by user.");
+                }
+            }
         };
 
         const rzp = new Razorpay(options);
-        rzp.on('payment.failed', (resp) => alert("Failed: " + resp.error.description));
+        
+        // Detailed Error Catching
+        rzp.on('payment.failed', function (resp) {
+            console.error("Payment Error:", resp.error);
+            alert("Error: " + resp.error.description + "\nReason: " + resp.error.reason);
+        });
+
         rzp.open();
     }
 
-    // Bind Events
     document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', calculate));
     document.getElementById('pay-btn').onclick = processPayment;
 
-    // Start App
     syncRates();
-    setInterval(syncRates, 600000); // Sync rates every 10 mins
+    setInterval(syncRates, 600000); 
 </script>
 
 </body>
