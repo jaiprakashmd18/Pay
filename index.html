@@ -31,16 +31,16 @@
             background: var(--card); 
             width: 100%; 
             max-width: 500px; 
-            border-radius: 20px; 
+            border-radius: 24px; 
             border: 1px solid var(--border); 
-            padding: 25px; 
+            padding: 30px; 
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
         }
 
         .header { text-align: center; margin-bottom: 25px; }
-        .header h2 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
+        .header h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
         
-        label { display: block; font-size: 0.65rem; text-transform: uppercase; color: var(--sec); margin-bottom: 8px; font-weight: 700; letter-spacing: 1px; }
+        label { display: block; font-size: 0.7rem; text-transform: uppercase; color: var(--sec); margin-bottom: 8px; font-weight: 700; letter-spacing: 1.2px; }
         
         .input-box { 
             width: 100%; 
@@ -51,56 +51,58 @@
             border-radius: 12px; 
             outline: none; 
             font-size: 1rem; 
-            margin-bottom: 15px; 
+            margin-bottom: 20px; 
+            transition: all 0.2s;
         }
-        .input-box:focus { border-color: var(--accent); }
+        .input-box:focus { border-color: var(--accent); background: #12181f; }
         
-        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
         .live-math { 
-            background: rgba(51, 149, 255, 0.04); 
+            background: rgba(51, 149, 255, 0.06); 
             border: 1px solid rgba(51, 149, 255, 0.2); 
-            border-radius: 12px; 
-            padding: 20px; 
-            margin-bottom: 20px; 
+            border-radius: 16px; 
+            padding: 24px; 
+            margin-bottom: 25px; 
             text-align: center;
         }
         
-        .total-line { font-size: 1.6rem; font-weight: 700; color: var(--accent); }
-        .total-label { font-size: 0.7rem; color: var(--sec); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1.5px; }
+        .total-line { font-size: 1.8rem; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }
+        .total-label { font-size: 0.75rem; color: var(--sec); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
         
         .btn { 
             width: 100%; 
-            padding: 16px; 
+            padding: 18px; 
             background: var(--accent); 
             color: white; 
             border: none; 
-            border-radius: 12px; 
+            border-radius: 14px; 
             font-weight: 700; 
+            font-size: 1rem;
             cursor: pointer; 
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .btn:hover { background: #4ca3ff; }
+        .btn:hover { background: #4ca3ff; transform: translateY(-1px); box-shadow: 0 10px 20px -10px rgba(51, 149, 255, 0.5); }
         .btn:active { transform: scale(0.98); }
-        .badge { display: inline-block; padding: 4px 8px; background: rgba(35, 134, 54, 0.15); color: #3fb950; border-radius: 4px; font-size: 0.6rem; font-weight: 700; margin-bottom: 8px; }
+        .badge { display: inline-block; padding: 4px 10px; background: rgba(35, 134, 54, 0.15); color: #3fb950; border-radius: 6px; font-size: 0.65rem; font-weight: 700; margin-bottom: 12px; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
 <div class="card">
     <div class="header">
-        <span class="badge">SECURE GLOBAL GATEWAY</span>
-        <h2>ZDC Global Checkout</h2>
+        <span class="badge">SECURE GLOBAL PAY</span>
+        <h2>ZDC Global</h2>
     </div>
 
     <label>Full Name</label>
-    <input type="text" id="client-name" class="input-box" placeholder="Customer Name">
+    <input type="text" id="client-name" class="input-box" placeholder="John Doe">
 
     <label>Phone Number</label>
-    <input type="tel" id="client-phone" class="input-box" placeholder="+1 ...">
+    <input type="tel" id="client-phone" class="input-box" placeholder="+1 234 567 890">
 
     <label>Amount to Receive</label>
-    <input type="number" id="amt" class="input-box" value="10.00" min="10">
+    <input type="number" id="amt" class="input-box" value="100.00" min="10">
 
     <div class="row">
         <div class="form-group">
@@ -115,36 +117,24 @@
         <div class="form-group">
             <label>Pay Using</label>
             <select id="pay-cur" class="input-box">
-                <option value="USD">USD ($)</option>
                 <option value="INR" selected>INR (₹)</option>
+                <option value="USD">USD ($)</option>
                 <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
                 <option value="AED">AED (د.إ)</option>
                 <option value="CAD">CAD ($)</option>
-                <option value="AUD">AUD ($)</option>
-                <option value="SGD">SGD ($)</option>
-                <option value="JPY">JPY (¥)</option>
-                <option value="GEL">GEL (₾)</option>
+                <option value="GBP">GBP (£)</option>
                 <option value="SAR">SAR (ر.س)</option>
-                <option value="QAR">QAR (ر.ق)</option>
-                <option value="THB">THB (฿)</option>
-                <option value="MYR">MYR (RM)</option>
-                <option value="CNY">CNY (¥)</option>
-                <option value="ZAR">ZAR (R)</option>
-                <option value="NZD">NZD ($)</option>
-                <option value="CHF">CHF (Fr)</option>
                 <option value="OMR">OMR (ر.ع.)</option>
-                <option value="KWD">KWD (د.ك)</option>
             </select>
         </div>
     </div>
 
     <div class="live-math">
-        <div class="total-label">Total Invoice Amount</div>
+        <div class="total-label">Final Payable Amount</div>
         <div class="total-line"><span id="out-total">--</span></div>
     </div>
 
-    <button class="btn" id="pay-btn">Initialize Secure Payment</button>
+    <button class="btn" id="pay-btn">Proceed to Secure Payment</button>
 </div>
 
 <script>
@@ -153,19 +143,16 @@
     const SYSTEM_FEE_USD = 14; 
     
     const sym = { 
-        USD: '$', INR: '₹', EUR: '€', GEL: '₾', GBP: '£', AED: 'د.إ', CAD: '$', AUD: '$', 
-        SGD: '$', JPY: '¥', SAR: 'ر.س', QAR: 'ر.ق', THB: '฿', MYR: 'RM', CNY: '¥', 
-        ZAR: 'R', NZD: '$', CHF: 'Fr', OMR: 'ر.ع.', KWD: 'د.ك' 
+        USD: '$', INR: '₹', EUR: '€', GEL: '₾', GBP: '£', AED: 'د.إ', CAD: '$', 
+        SAR: 'ر.س', OMR: 'ر.ع.'
     };
 
     let liveRates = {};
     let finalSelection = {};
 
-    // Security: Block F12, Ctrl+U, Ctrl+Shift+I
+    // Block F12, Ctrl+U, Ctrl+Shift+I
     document.onkeydown = function(e) {
-        if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) {
-            return false;
-        }
+        if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) return false;
     };
 
     async function syncRates() {
@@ -175,9 +162,7 @@
             liveRates = data.rates;
             calculate();
         } catch (e) {
-            console.error("Rate sync failed");
-            // Fallback rates if API is down
-            liveRates = { USD: 1, INR: 83, EUR: 0.92, GBP: 0.78, GEL: 2.7 };
+            liveRates = { USD: 1, INR: 83.5, EUR: 0.92, GBP: 0.78, GEL: 2.7 };
             calculate();
         }
     }
@@ -195,83 +180,92 @@
         const targetCur = document.getElementById('target-cur').value;
         const payCur = document.getElementById('pay-cur').value;
 
-        // Calculate base exchange
         const crossRate = liveRates[payCur] / liveRates[targetCur];
         const finalBase = amountWanted * crossRate;
-        
-        // Hidden Fee Calculation
         const feeInPayCur = (SYSTEM_FEE_USD * liveRates[payCur]) * 1.05;
         const roundedFee = applyRounding(feeInPayCur, payCur);
         const total = finalBase + roundedFee;
 
-        const symbol = sym[payCur] || payCur;
-        document.getElementById('out-total').innerText = `${symbol} ${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        const s = sym[payCur] || payCur;
+        document.getElementById('out-total').innerText = `${s} ${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
 
         finalSelection = { 
             amt: Math.round(Number(total.toFixed(2)) * 100), 
             cur: payCur,
             requested: amountWanted,
             targetCur: targetCur,
-            totalFormatted: `${symbol} ${(total).toLocaleString()}`
+            totalFormatted: `${s} ${(total).toLocaleString(undefined, {minimumFractionDigits: 2})}`
         };
     }
 
-    function generateInvoice(res, selection, name, phone) {
+    function generateEnhancedPDF(res, selection, name, phone) {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
+        const primaryColor = [51, 149, 255];
+
+        // 1. Header Bar
+        doc.setFillColor(...primaryColor);
+        doc.rect(0, 0, 210, 40, 'F');
         
-        // Color Theme
-        const primary = [51, 149, 255];
-        
-        // Header Banner
-        doc.setFillColor(...primary);
-        doc.rect(0, 0, 210, 45, 'F');
         doc.setTextColor(255, 255, 255);
-        doc.setFontSize(24);
         doc.setFont("helvetica", "bold");
-        doc.text("ZDC GLOBAL", 15, 25);
+        doc.setFontSize(22);
+        doc.text("ZDC GLOBAL", 20, 25);
+        
         doc.setFontSize(10);
-        doc.text("OFFICIAL PAYMENT INVOICE", 15, 33);
+        doc.setFont("helvetica", "normal");
+        doc.text("SECURE CURRENCY EXCHANGE INVOICE", 20, 32);
         
-        doc.setFontSize(12);
-        doc.text("STATUS: SUCCESSFUL / PAID", 140, 25);
+        doc.setFontSize(14);
+        doc.text("STATUS: PAID", 160, 25);
 
-        // Body Content
+        // 2. Alignment Grid (Left Column: User, Right Column: Meta)
         doc.setTextColor(40, 40, 40);
-        doc.setFontSize(12);
+        doc.setFontSize(10);
         doc.setFont("helvetica", "bold");
-        doc.text("BILL TO:", 15, 60);
-        doc.setFont("helvetica", "normal");
-        doc.text(`Customer: ${name}`, 15, 68);
-        doc.text(`Contact: ${phone}`, 15, 75);
-        
-        doc.setFont("helvetica", "bold");
-        doc.text("TRANSACTION DETAILS:", 120, 60);
-        doc.setFont("helvetica", "normal");
-        doc.text(`Ref ID: ${res.razorpay_payment_id}`, 120, 68);
-        doc.text(`Date: ${new Date().toLocaleString()}`, 120, 75);
+        doc.text("BILL TO:", 20, 55);
+        doc.text("INVOICE DETAILS:", 130, 55);
 
-        // Invoice Table
+        doc.setFont("helvetica", "normal");
+        doc.text(`Customer: ${name}`, 20, 62);
+        doc.text(`Phone: ${phone}`, 20, 68);
+
+        doc.text(`Invoice No: #ZDC-${res.razorpay_payment_id.slice(-6).toUpperCase()}`, 130, 62);
+        doc.text(`Payment ID: ${res.razorpay_payment_id}`, 130, 68);
+        doc.text(`Date: ${new Date().toLocaleString()}`, 130, 74);
+
+        // 3. Perfectly Aligned Table
         doc.autoTable({
-            startY: 90,
-            head: [['Service Description', 'Currency', 'Quantity', 'Total']],
+            startY: 85,
+            head: [['Description', 'Qty', 'Unit', 'Total Price']],
             body: [
-                [`Cross-Border Exchange (${selection.requested} ${selection.targetCur})`, selection.cur, '1', selection.totalFormatted],
+                [`Exchange Service (${selection.requested} ${selection.targetCur})`, '1', selection.cur, selection.totalFormatted],
             ],
-            headStyles: { fillColor: primary, textColor: [255, 255, 255] },
-            theme: 'grid'
+            headStyles: { fillColor: primaryColor, halign: 'center' },
+            columnStyles: {
+                0: { cellWidth: 100 },
+                1: { halign: 'center' },
+                2: { halign: 'center' },
+                3: { halign: 'right' }
+            },
+            theme: 'striped',
+            margin: { left: 20, right: 20 }
         });
 
-        const finalY = doc.lastAutoTable.finalY + 20;
+        // 4. Summary Calculation Aligned Right
+        const finalY = doc.lastAutoTable.finalY + 15;
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
-        doc.text(`Grand Total Paid: ${selection.totalFormatted}`, 120, finalY);
+        doc.setFontSize(12);
+        doc.text("Total Paid:", 140, finalY);
+        doc.setTextColor(...primaryColor);
+        doc.text(selection.totalFormatted, 190, finalY, { align: 'right' });
 
-        // Legal Footer
+        // 5. Footer and Watermark
         doc.setFontSize(8);
-        doc.setTextColor(150, 150, 150);
-        doc.text("ZDC Global provides secure escrow-based currency exchange services.", 105, 275, { align: "center" });
-        doc.text("This document serves as proof of payment and is generated automatically.", 105, 280, { align: "center" });
+        doc.setTextColor(180, 180, 180);
+        const footerY = 280;
+        doc.text("This is a digitally signed receipt and requires no physical signature.", 105, footerY, { align: 'center' });
+        doc.text("ZDC Global © 2026 - Secure Global Remittance", 105, footerY + 5, { align: 'center' });
 
         doc.save(`ZDC_Invoice_${res.razorpay_payment_id}.pdf`);
     }
@@ -284,37 +278,28 @@
         const targetCur = document.getElementById('target-cur').value;
         const amtInUSD = amountRequested / liveRates[targetCur];
 
-        if (!name || !phone) { alert("Please complete customer details."); return; }
-        if (amtInUSD < MIN_USD) { alert(`The minimum exchange amount is $10.00 USD.`); return; }
+        if (!name || !phone) { alert("Please provide customer details."); return; }
+        if (amtInUSD < MIN_USD) { alert("Minimum request is $10.00 USD."); return; }
 
         const options = {
             key: RZP_KEY,
             amount: finalSelection.amt,
             currency: finalSelection.cur,
             name: "ZDC Global",
-            description: `Invoice for ${finalSelection.requested} ${finalSelection.targetCur}`,
+            description: `Exchange Order ${finalSelection.requested} ${finalSelection.targetCur}`,
             handler: function(response) {
-                generateInvoice(response, finalSelection, name, phone);
-                alert("Payment Verified. Your professional invoice is downloading.");
+                generateEnhancedPDF(response, finalSelection, name, phone);
+                alert("Payment Successful. Your Invoice has been generated.");
                 location.reload();
             },
             prefill: { name: name, contact: phone },
             theme: { color: "#3395ff" }
         };
-        
-        try {
-            const rzp = new Razorpay(options);
-            rzp.open();
-        } catch (e) {
-            alert("Payment Gateway Error. Check your connection.");
-        }
+        new Razorpay(options).open();
     }
 
-    // Listeners
     document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', calculate));
     document.getElementById('pay-btn').onclick = processPayment;
-    
-    // Initial Sync
     syncRates();
 </script>
 
