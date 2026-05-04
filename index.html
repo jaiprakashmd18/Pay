@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZDC Global Payment Portal</title>
-    
-    <!-- Core External Libraries -->
+    <!-- Dependencies -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,26 +12,29 @@
     <style>
         :root {
             --bg: #0a0b0d; --card: #161b22; --accent: #3395ff; --border: #30363d;
-            --text: #ffffff; --sec: #8b949e; --err: #f85149;
+            --text: #ffffff; --sec: #8b949e;
         }
-        * { 
-            box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; 
-            user-select: none; /* Security: Prevents text selection[cite: 1] */
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; user-select: none; }
         
         body { 
-            background: var(--bg); color: var(--text); 
-            display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; padding: 10px; 
+            background: var(--bg); 
+            color: var(--text); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 10px; 
         }
         
         .card { 
-            background: var(--card); width: 100%; max-width: 480px; 
-            border-radius: 20px; border: 1px solid var(--border); 
-            padding: 25px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+            background: var(--card); 
+            width: 100%; 
+            max-width: 480px; 
+            border-radius: 20px; 
+            border: 1px solid var(--border); 
+            padding: 25px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
         }
-
-        @media (min-width: 480px) { .card { padding: 35px; } }
 
         .header { text-align: center; margin-bottom: 25px; }
         .header h2 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
@@ -40,117 +42,105 @@
         label { display: block; font-size: 0.65rem; text-transform: uppercase; color: var(--sec); margin-bottom: 8px; font-weight: 700; letter-spacing: 1px; }
         
         .input-box { 
-            width: 100%; padding: 14px; background: #0d1117; 
-            border: 1px solid var(--border); color: white; 
-            border-radius: 12px; outline: none; font-size: 1rem; 
-            margin-bottom: 15px; appearance: none;
-            user-select: text; /* Re-enable for data entry[cite: 1] */
+            width: 100%; 
+            padding: 14px; 
+            background: #0d1117; 
+            border: 1px solid var(--border); 
+            color: white; 
+            border-radius: 12px; 
+            outline: none; 
+            font-size: 1rem; 
+            margin-bottom: 15px; 
         }
         .input-box:focus { border-color: var(--accent); }
         
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        @media (max-width: 380px) { .row { grid-template-columns: 1fr; } }
         
         .live-math { 
             background: rgba(51, 149, 255, 0.04); 
             border: 1px solid rgba(51, 149, 255, 0.2); 
-            border-radius: 12px; padding: 20px; 
-            margin-bottom: 20px; text-align: center;
+            border-radius: 12px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            text-align: center;
         }
         
-        .total-label { font-size: 0.7rem; text-transform: uppercase; color: var(--sec); font-weight: 700; letter-spacing: 1px; margin-bottom: 5px; display: block; }
-        .total-line { font-size: 2rem; font-weight: 700; color: var(--accent); }
+        .total-line { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+        .total-label { font-size: 0.75rem; color: var(--sec); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
         
-        .min-alert { font-size: 0.75rem; color: var(--err); margin-top: 10px; display: none; font-weight: 600; }
-
         .btn { 
-            width: 100%; padding: 16px; background: var(--accent); 
-            color: white; border: none; border-radius: 12px; 
-            font-weight: 700; font-size: 1rem; cursor: pointer; 
-            transition: transform 0.2s, opacity 0.2s;
+            width: 100%; 
+            padding: 16px; 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: transform 0.2s;
         }
-        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        .btn:active:not(:disabled) { transform: scale(0.97); }
+        .btn:active { transform: scale(0.97); }
         .badge { display: inline-block; padding: 4px 8px; background: rgba(35, 134, 54, 0.15); color: #3fb950; border-radius: 4px; font-size: 0.6rem; font-weight: 700; margin-bottom: 8px; }
     </style>
 </head>
-<body oncontextmenu="return false;"> <!-- Security: Disable Right Click[cite: 1] -->
+<body oncontextmenu="return false;">
 
 <div class="card">
     <div class="header">
-        <span class="badge">SECURE GATEWAY</span>
+        <span class="badge">SECURE ENCRYPTED GATEWAY</span>
         <h2>ZDC Global Checkout</h2>
     </div>
 
-    <div class="form-group">
-        <label>Client Name</label>
-        <input type="text" id="client-name" class="input-box" placeholder="Your Full Name">
-    </div>
+    <label>Full Name</label>
+    <input type="text" id="client-name" class="input-box" placeholder="Name">
 
-    <div class="form-group">
-        <label>Phone Number</label>
-        <input type="tel" id="client-phone" class="input-box" placeholder="+91 ...">
-    </div>
+    <label>Phone Number</label>
+    <input type="tel" id="client-phone" class="input-box" placeholder="+0 ...">
 
-    <div class="form-group">
-        <label>Requested Value</label>
-        <input type="number" id="amt" class="input-box" value="100" min="0">
-    </div>
+    <label>Amount (Requested)</label>
+    <input type="number" id="amt" class="input-box" value="10.00" min="10">
 
     <div class="row">
         <div class="form-group">
-            <label>You Receive</label>
+            <label>Currency to Get</label>
             <select id="target-cur" class="input-box">
                 <option value="USD">USD ($)</option>
                 <option value="GEL">GEL (₾)</option>
                 <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
             </select>
         </div>
         <div class="form-group">
-            <label>Customer Pays</label>
+            <label>Pay Using</label>
             <select id="pay-cur" class="input-box">
                 <option value="INR" selected>INR (₹)</option>
                 <option value="USD">USD ($)</option>
                 <option value="EUR">EUR (€)</option>
-                <option value="GEL">GEL (₾)</option>
-                <option value="GBP">GBP (£)</option>
-                <option value="AED">AED (د.إ)</option>
-                <option value="CAD">CAD ($)</option>
             </select>
         </div>
     </div>
 
     <div class="live-math">
-        <span class="total-label">Total Payment Due</span>
-        <div class="total-line" id="out-total">--</div>
-        <div id="min-warning" class="min-alert">Min payment must be ₹2,000 INR[cite: 1]</div>
+        <div class="total-label">Total Amount Payable</div>
+        <div class="total-line"><span id="out-total">--</span></div>
     </div>
 
-    <button class="btn" id="pay-btn" disabled>Proceed to Payment</button>
+    <button class="btn" id="pay-btn">Initialize Payment</button>
 </div>
 
 <script>
-    /** 
-     * SECURITY LAYER 
-     * Prevents Inspection & Code Copying[cite: 1]
-     */
-    document.onkeydown = function(e) {
-        if(event.keyCode == 123) return false; // F12
-        if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; 
-        if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; 
-        if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; 
-    }
-
-    /** 
-     * PAYMENT LOGIC 
-     */
-    const RZP_KEY = 'rzp_test_SlAhlNeWJ4YdsA'; // Test Key[cite: 1]
+    const RZP_KEY = 'rzp_test_SlAhlNeWJ4YdsA'; 
+    const MIN_USD = 10.00;
     const SYSTEM_FEE_USD = 14; 
-    const MIN_INR = 2000; // Strict INR Minimum[cite: 1]
     const sym = { USD: '$', INR: '₹', EUR: '€', GEL: '₾', GBP: '£', AED: 'د.إ', CAD: '$' };
     let liveRates = {};
     let finalSelection = {};
+
+    // Security: Disable F12 and Inspect Element
+    document.onkeydown = function(e) {
+        if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) {
+            return false;
+        }
+    };
 
     async function syncRates() {
         try {
@@ -166,8 +156,7 @@
 
     function applyRounding(val, curr) {
         if (curr === 'INR') return Math.ceil(val / 10) * 10;
-        if (['USD', 'EUR', 'GBP'].includes(curr)) return Math.floor(val) + 0.90;
-        if (curr === 'GEL') return Math.round(val * 2) / 2;
+        if (['USD', 'EUR'].includes(curr)) return Math.floor(val) + 0.90;
         return Math.ceil(val); 
     }
 
@@ -179,91 +168,61 @@
 
         const crossRate = liveRates[payCur] / liveRates[targetCur];
         const finalBase = amountWanted * crossRate;
+        
         const feeInPayCur = (SYSTEM_FEE_USD * liveRates[payCur]) * 1.05;
         const roundedFee = applyRounding(feeInPayCur, payCur);
         const total = finalBase + roundedFee;
 
-        // Convert total to INR equivalent for strict checking[cite: 1]
-        const totalInINR = (total / liveRates[payCur]) * liveRates.INR;
-        
         document.getElementById('out-total').innerText = `${sym[payCur] || payCur} ${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-
-        const btn = document.getElementById('pay-btn');
-        const warning = document.getElementById('min-warning');
-
-        if (totalInINR < MIN_INR) {
-            btn.disabled = true;
-            warning.style.display = 'block';
-        } else {
-            btn.disabled = false;
-            warning.style.display = 'none';
-        }
 
         finalSelection = { 
             amt: Math.round(Number(total.toFixed(2)) * 100), 
             cur: payCur,
-            totalVal: total.toFixed(2),
-            desc: `ZDC Infrastructure: ${amountWanted} ${targetCur}`,
-            inrValue: totalInINR
+            requested: amountWanted,
+            targetCur: targetCur,
+            desc: `ZDC Exchange: ${amountWanted} ${targetCur}`
         };
     }
 
-    /** 
-     * PDF GENERATION 
-     */
-    function generatePDFReceipt(res, selection, name, phone) {
+    async function generatePDF(res, selection, name, phone) {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        const timestamp = new Date().toLocaleString();
-
-        doc.setFillColor(51, 149, 255);
-        doc.rect(0, 0, 210, 40, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(22);
-        doc.text("ZDC GLOBAL PAYMENT SLIP", 20, 25);
-
-        doc.setTextColor(0, 0, 0);
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "bold");
-        doc.text("CLIENT DATA", 20, 55);
-        doc.setFont("helvetica", "normal");
-        doc.text(`Client: ${name}`, 20, 65);
-        doc.text(`Contact: ${phone}`, 20, 72);
-        doc.text(`Time: ${timestamp}`, 20, 79);
-
-        doc.setFont("helvetica", "bold");
-        doc.text("TRANSACTION", 20, 95);
-        doc.setFont("helvetica", "normal");
-        doc.text(`Ref ID: ${res.razorpay_payment_id}`, 20, 105);
-        doc.text(`Details: ${selection.desc}`, 20, 112);
         
-        doc.setDrawColor(200, 200, 200);
-        doc.line(20, 130, 190, 130);
-        doc.setFontSize(16);
         doc.setFont("helvetica", "bold");
-        doc.text(`TOTAL PAID: ${sym[selection.cur]} ${selection.totalVal}`, 20, 145);
-        
+        doc.text("ZDC GLOBAL PAYMENT RECEIPT", 105, 20, { align: "center" });
         doc.setFontSize(10);
-        doc.setTextColor(100, 100, 100);
-        doc.text("STATUS: SUCCESSFUL (Instant Capture Enabled)", 20, 155);
+        doc.setFont("helvetica", "normal");
+        
+        const details = [
+            ["Transaction ID", res.razorpay_payment_id],
+            ["Date", new Date().toLocaleString()],
+            ["Client Name", name],
+            ["Phone", phone],
+            ["Service", selection.desc],
+            ["Total Paid", `${sym[selection.cur]} ${(selection.amt / 100).toFixed(2)}`],
+            ["Status", "SUCCESSFUL"]
+        ];
 
-        doc.save(`Receipt_${res.razorpay_payment_id}.pdf`);
+        let y = 40;
+        details.forEach(detail => {
+            doc.text(`${detail[0]}:`, 20, y);
+            doc.text(detail[1], 70, y);
+            y += 10;
+        });
+
+        doc.save(`ZDC_Receipt_${res.razorpay_payment_id}.pdf`);
     }
 
     function processPayment() {
         const name = document.getElementById('client-name').value;
         const phone = document.getElementById('client-phone').value;
-        
-        if (!name || !phone) {
-            alert("Security: Client Name and Phone are required.");
-            return;
-        }
+        const amountRequested = parseFloat(document.getElementById('amt').value);
 
-        // Strict Server-Side-style check before launch[cite: 1]
-        if (finalSelection.inrValue < MIN_INR) {
-            alert("Transaction Denied: Minimum amount is ₹2,000 INR.");
-            return;
-        }
+        const targetCur = document.getElementById('target-cur').value;
+        const amtInUSD = amountRequested / liveRates[targetCur];
+
+        if (!name || !phone) { alert("Please provide customer details."); return; }
+        if (amtInUSD < MIN_USD) { alert(`Minimum order is $10.00 USD.`); return; }
 
         const options = {
             key: RZP_KEY,
@@ -271,21 +230,17 @@
             currency: finalSelection.cur,
             name: "ZDC Global",
             description: finalSelection.desc,
-            payment_capture: 1, // Instant Capture Enabled[cite: 1]
             handler: function(response) {
-                generatePDFReceipt(response, finalSelection, name, phone);[cite: 1]
-                alert("Success: Payment captured. Your PDF receipt is ready.");
+                generatePDF(response, finalSelection, name, phone);
+                alert("Success! Your PDF receipt has been generated.");
                 location.reload();
             },
             prefill: { name: name, contact: phone },
             theme: { color: "#3395ff" }
         };
-        const rzp = new Razorpay(options);
-        rzp.on('payment.failed', (resp) => alert("Error: " + resp.error.description));
-        rzp.open();
+        new Razorpay(options).open();
     }
 
-    // Initialize Event Listeners[cite: 1]
     document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', calculate));
     document.getElementById('pay-btn').onclick = processPayment;
     syncRates();
