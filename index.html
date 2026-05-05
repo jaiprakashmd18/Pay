@@ -131,7 +131,7 @@
 </div>
 
 <script>
-    const RZP_KEY = 'rzp_test_SlAhlNeWJ4YdsA'; 
+    const RZP_KEY = 'rzp_live_S2txcF6a0q5CDJ'; 
     const MIN_USD = 10.00;
     const SYSTEM_FEE_USD = 14; 
     
@@ -142,7 +142,6 @@
     let liveRates = {};
     let finalSelection = {};
 
-    // Security Controls
     document.onkeydown = (e) => {
         if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) return false;
     };
@@ -169,7 +168,6 @@
         const finalBase = amountWanted * crossRate;
         const feeInPayCur = (SYSTEM_FEE_USD * liveRates[payCur]) * 1.05;
         
-        // Custom Rounding Logic
         let roundedFee = Math.ceil(feeInPayCur);
         if(payCur === 'INR') roundedFee = Math.ceil(feeInPayCur / 10) * 10;
         
@@ -192,12 +190,11 @@
         const doc = new jsPDF('p', 'mm', 'a4');
         const margin = 20;
         const pageWidth = doc.internal.pageSize.width;
+        const rightEdge = pageWidth - margin;
 
-        // Header Background
+        // Header
         doc.setFillColor(51, 149, 255);
         doc.rect(0, 0, pageWidth, 45, 'F');
-        
-        // Brand Identity
         doc.setTextColor(255, 255, 255);
         doc.setFont("helvetica", "bold");
         doc.setFontSize(26);
@@ -205,62 +202,60 @@
         doc.setFontSize(10);
         doc.setFont("helvetica", "normal");
         doc.text("SECURE FINANCIAL SERVICES", margin, 33);
-        
-        // Status Stamp
         doc.setFontSize(14);
-        doc.setFont("helvetica", "bold");
-        doc.text("PAID INVOICE", pageWidth - margin, 28, { align: 'right' });
+        doc.text("PAID", rightEdge, 28, { align: 'right' });
 
-        // Bill Content
+        // Bill Info Grid
         doc.setTextColor(40, 40, 40);
         doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
         doc.text("BILL TO:", margin, 60);
-        doc.text("TRANSACTION DETAILS:", pageWidth - 80, 60);
+        doc.text("INVOICE DETAILS:", 120, 60);
 
-        // Separator Line
         doc.setDrawColor(230, 230, 230);
-        doc.line(margin, 63, pageWidth - margin, 63);
+        doc.line(margin, 63, rightEdge, 63);
 
-        // Aligned Body Text
         doc.setFont("helvetica", "normal");
         doc.text(`Name: ${name}`, margin, 70);
         doc.text(`Contact: ${phone}`, margin, 76);
+        doc.text(`Order ID: #ZDC-${res.razorpay_payment_id.slice(-6).toUpperCase()}`, 120, 70);
+        doc.text(`Payment ID: ${res.razorpay_payment_id}`, 120, 76);
+        doc.text(`Date: ${new Date().toLocaleString()}`, 120, 82);
 
-        doc.text(`Order ID: #ZDC-${res.razorpay_payment_id.slice(-6).toUpperCase()}`, pageWidth - 80, 70);
-        doc.text(`Payment ID: ${res.razorpay_payment_id}`, pageWidth - 80, 76);
-        doc.text(`Date: ${new Date().toLocaleString()}`, pageWidth - 80, 82);
-
-        // Table Implementation
+        // Table
         doc.autoTable({
             startY: 95,
-            head: [['Service Description', 'Qty', 'Currency', 'Total']],
+            head: [['Description', 'Qty', 'Currency', 'Total']],
             body: [
-                [`Currency Exchange Service (${selection.requested} ${selection.targetCur})`, '1', selection.cur, selection.totalFormatted],
+                [`Exchange Service (${selection.requested} ${selection.targetCur})`, '1', selection.cur, selection.totalFormatted],
             ],
-            headStyles: { fillColor: [51, 149, 255], textColor: 255, halign: 'center' },
-            bodyStyles: { halign: 'center' },
+            headStyles: { fillColor: [51, 149, 255], textColor: 255 },
             columnStyles: { 
-                0: { cellWidth: 90, halign: 'left' },
+                0: { cellWidth: 90 },
+                1: { halign: 'center' },
+                2: { halign: 'center' },
                 3: { halign: 'right' } 
             },
             margin: { left: margin, right: margin },
             theme: 'grid'
         });
 
-        // Grand Total Alignment
+        // FIXED ALIGNMENT: Grand Total Logic
         const finalY = doc.lastAutoTable.finalY + 15;
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
+        doc.setFontSize(12);
+        
+        // Text "TOTAL AMOUNT PAID" ends right before the value
         doc.text("TOTAL AMOUNT PAID:", 110, finalY);
+        
+        // Final Price aligned strictly to the right edge of the table
         doc.setTextColor(51, 149, 255);
-        doc.text(selection.totalFormatted, pageWidth - margin, finalY, { align: 'right' });
+        doc.text(selection.totalFormatted, rightEdge, finalY, { align: 'right' });
 
         // Footer
         doc.setFontSize(8);
         doc.setTextColor(170, 170, 170);
-        doc.text("This invoice is electronically generated and verified for security.", pageWidth / 2, 280, { align: 'center' });
-        doc.text("ZDC Global © 2026 | Support: contact@zdcglobal.com", pageWidth / 2, 285, { align: 'center' });
-
+        doc.text("This receipt is verified and digitally signed.", pageWidth / 2, 280, { align: 'center' });
         doc.save(`ZDC_Invoice_${res.razorpay_payment_id}.pdf`);
     }
 
@@ -269,9 +264,9 @@
         const phone = document.getElementById('client-phone').value;
         const amt = parseFloat(document.getElementById('amt').value);
 
-        if (!name || !phone) { alert("Customer details missing."); return; }
+        if (!name || !phone) { alert("Details missing."); return; }
         if (amt / liveRates[document.getElementById('target-cur').value] < MIN_USD) {
-            alert("Minimum amount is $10 USD equivalent."); return;
+            alert("Min $10 USD required."); return;
         }
 
         const options = {
@@ -282,7 +277,7 @@
             description: `Payment for ${finalSelection.requested} ${finalSelection.targetCur}`,
             handler: function(response) {
                 generateInvoice(response, finalSelection, name, phone);
-                alert("Payment Successful. Receipt downloading...");
+                alert("Payment Success!");
                 location.reload();
             },
             prefill: { name: name, contact: phone },
