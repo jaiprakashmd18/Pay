@@ -174,14 +174,16 @@
         const total = finalBase + roundedFee;
         const s = sym[payCur] || payCur;
 
-        document.getElementById('out-total').innerText = `${s} ${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        // Display with 2 decimals in UI
+        document.getElementById('out-total').innerText = `${s} ${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
         finalSelection = { 
             amt: Math.round(Number(total.toFixed(2)) * 100), 
             cur: payCur,
             requested: amountWanted,
             targetCur: targetCur,
-            totalFormatted: `${s} ${(total).toLocaleString(undefined, {minimumFractionDigits: 2})}`
+            // Store strictly formatted string for PDF
+            totalFormatted: `${s} ${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`
         };
     }
 
@@ -192,7 +194,7 @@
         const pageWidth = doc.internal.pageSize.width;
         const rightEdge = pageWidth - margin;
 
-        // Header
+        // 1. Header Blue Bar
         doc.setFillColor(51, 149, 255);
         doc.rect(0, 0, pageWidth, 45, 'F');
         doc.setTextColor(255, 255, 255);
@@ -205,12 +207,12 @@
         doc.setFontSize(14);
         doc.text("PAID", rightEdge, 28, { align: 'right' });
 
-        // Bill Info Grid
+        // 2. Info Grid
         doc.setTextColor(40, 40, 40);
         doc.setFontSize(10);
         doc.setFont("helvetica", "bold");
         doc.text("BILL TO:", margin, 60);
-        doc.text("INVOICE DETAILS:", 120, 60);
+        doc.text("TRANSACTION DETAILS:", 115, 60);
 
         doc.setDrawColor(230, 230, 230);
         doc.line(margin, 63, rightEdge, 63);
@@ -218,44 +220,46 @@
         doc.setFont("helvetica", "normal");
         doc.text(`Name: ${name}`, margin, 70);
         doc.text(`Contact: ${phone}`, margin, 76);
-        doc.text(`Order ID: #ZDC-${res.razorpay_payment_id.slice(-6).toUpperCase()}`, 120, 70);
-        doc.text(`Payment ID: ${res.razorpay_payment_id}`, 120, 76);
-        doc.text(`Date: ${new Date().toLocaleString()}`, 120, 82);
+        doc.text(`Order ID: #ZDC-${res.razorpay_payment_id.slice(-6).toUpperCase()}`, 115, 70);
+        doc.text(`Payment ID: ${res.razorpay_payment_id}`, 115, 76);
+        doc.text(`Date: ${new Date().toLocaleString()}`, 115, 82);
 
-        // Table
+        // 3. Table - Optimized Alignment
         doc.autoTable({
             startY: 95,
             head: [['Description', 'Qty', 'Currency', 'Total']],
             body: [
                 [`Exchange Service (${selection.requested} ${selection.targetCur})`, '1', selection.cur, selection.totalFormatted],
             ],
-            headStyles: { fillColor: [51, 149, 255], textColor: 255 },
+            headStyles: { fillColor: [51, 149, 255], textColor: 255, halign: 'center' },
+            bodyStyles: { textColor: 40 },
             columnStyles: { 
-                0: { cellWidth: 90 },
-                1: { halign: 'center' },
-                2: { halign: 'center' },
-                3: { halign: 'right' } 
+                0: { cellWidth: 90, halign: 'left' },
+                1: { cellWidth: 20, halign: 'center' },
+                2: { cellWidth: 30, halign: 'center' },
+                3: { cellWidth: 30, halign: 'right' } 
             },
             margin: { left: margin, right: margin },
             theme: 'grid'
         });
 
-        // FIXED ALIGNMENT: Grand Total Logic
+        // 4. TOTAL ROW - REPAIRED ALIGNMENT
         const finalY = doc.lastAutoTable.finalY + 15;
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
+        doc.setFontSize(14);
         
-        // Text "TOTAL AMOUNT PAID" ends right before the value
-        doc.text("TOTAL AMOUNT PAID:", 110, finalY);
+        // Align Label
+        doc.text("TOTAL AMOUNT PAID:", 100, finalY);
         
-        // Final Price aligned strictly to the right edge of the table
+        // Align Value Flush to Right Edge of the Table
         doc.setTextColor(51, 149, 255);
         doc.text(selection.totalFormatted, rightEdge, finalY, { align: 'right' });
 
         // Footer
         doc.setFontSize(8);
         doc.setTextColor(170, 170, 170);
-        doc.text("This receipt is verified and digitally signed.", pageWidth / 2, 280, { align: 'center' });
+        doc.text("This receipt is verified and digitally signed for security.", pageWidth / 2, 280, { align: 'center' });
+
         doc.save(`ZDC_Invoice_${res.razorpay_payment_id}.pdf`);
     }
 
@@ -264,7 +268,7 @@
         const phone = document.getElementById('client-phone').value;
         const amt = parseFloat(document.getElementById('amt').value);
 
-        if (!name || !phone) { alert("Details missing."); return; }
+        if (!name || !phone) { alert("Customer name and phone required."); return; }
         if (amt / liveRates[document.getElementById('target-cur').value] < MIN_USD) {
             alert("Min $10 USD required."); return;
         }
@@ -274,10 +278,10 @@
             amount: finalSelection.amt,
             currency: finalSelection.cur,
             name: "ZDC Global",
-            description: `Payment for ${finalSelection.requested} ${finalSelection.targetCur}`,
+            description: `Exchange Order ${finalSelection.requested} ${finalSelection.targetCur}`,
             handler: function(response) {
                 generateInvoice(response, finalSelection, name, phone);
-                alert("Payment Success!");
+                alert("Payment Success! Downloading Invoice...");
                 location.reload();
             },
             prefill: { name: name, contact: phone },
@@ -293,3 +297,4 @@
 
 </body>
 </html>
+
